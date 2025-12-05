@@ -1,0 +1,1469 @@
+# Sources export for GPT
+# generated_at: 2025-12-05T00:33:47
+# roots: ., ./src
+# patterns: *.java, *.yml, *.yaml, *.xml, README.md
+# excluded_dirs: .cache, .git, .hg, .idea, .mypy_cache, .svn, .terraform, .txt, .venv, .vscode, __pycache__, bazel-bin, bazel-out, bazel-testlogs, build, dist, env, node_modules, out, target, temporary, vendor, venv
+
+
+===== FILE: pom.xml =====
+# size: 2921 bytes
+```XML
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <version>3.3.5</version>
+    <relativePath/>
+  </parent>
+
+  <groupId>com.aftersports</groupId>
+  <artifactId>aftersports</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <name>AfterSports</name>
+  <description>AfterSports — API de agendamentos de aulas esportivas</description>
+
+  <properties>
+    <java.version>17</java.version>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-data-jpa</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-validation</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.postgresql</groupId>
+      <artifactId>postgresql</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springdoc</groupId>
+      <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+      <version>2.6.0</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <optional>true</optional>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+	<dependency>
+		<groupId>com.h2database</groupId>
+		<artifactId>h2</artifactId>
+		<scope>test</scope>
+	</dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <annotationProcessorPaths>
+            <path>
+              <groupId>org.projectlombok</groupId>
+              <artifactId>lombok</artifactId>
+              <version>${lombok.version}</version>
+            </path>
+          </annotationProcessorPaths>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </build>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.projectlombok</groupId>
+        <artifactId>lombok</artifactId>
+        <version>1.18.34</version>
+        <scope>provided</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+</project>
+
+```
+
+===== FILE: src/main/java/com/aftersports/aftersports/AfterSportsApplication.java =====
+# size: 341 bytes
+```java
+package com.aftersports.aftersports;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class AfterSportsApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(AfterSportsApplication.class, args);
+    }
+}
+
+```
+
+===== FILE: src/main/java/com/aftersports/aftersports/domain/model/Booking.java =====
+# size: 1788 bytes
+```java
+package com.aftersports.aftersports.domain.model;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.Table;
+import java.time.Instant;
+
+@Entity
+@Table(name = "bookings")
+public class Booking {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "lesson_id", nullable = false)
+    private Lesson lesson;
+
+    @Column(nullable = false)
+    private String studentName;
+
+    @Column(nullable = false)
+    private String studentEmail;
+
+    @Column(nullable = false)
+    private Instant createdAt;
+
+    @PrePersist
+    public void prePersist() {
+        this.createdAt = Instant.now();
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Lesson getLesson() {
+        return lesson;
+    }
+
+    public void setLesson(Lesson lesson) {
+        this.lesson = lesson;
+    }
+
+    public String getStudentName() {
+        return studentName;
+    }
+
+    public void setStudentName(String studentName) {
+        this.studentName = studentName;
+    }
+
+    public String getStudentEmail() {
+        return studentEmail;
+    }
+
+    public void setStudentEmail(String studentEmail) {
+        this.studentEmail = studentEmail;
+    }
+
+    public Instant getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Instant createdAt) {
+        this.createdAt = createdAt;
+    }
+}
+
+```
+
+===== FILE: src/main/java/com/aftersports/aftersports/domain/model/Instructor.java =====
+# size: 1078 bytes
+```java
+package com.aftersports.aftersports.domain.model;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name = "instructors")
+public class Instructor {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false)
+    private String name;
+
+    @Column(nullable = false)
+    private String sport;
+
+    @Column
+    private String bio;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getSport() {
+        return sport;
+    }
+
+    public void setSport(String sport) {
+        this.sport = sport;
+    }
+
+    public String getBio() {
+        return bio;
+    }
+
+    public void setBio(String bio) {
+        this.bio = bio;
+    }
+}
+
+```
+
+===== FILE: src/main/java/com/aftersports/aftersports/domain/model/Lesson.java =====
+# size: 2710 bytes
+```java
+package com.aftersports.aftersports.domain.model;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import java.time.LocalDateTime;
+
+@Entity
+@Table(name = "lessons")
+public class Lesson {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "instructor_id", nullable = false)
+    private Instructor instructor;
+
+    @Column(nullable = false)
+    private String title;
+
+    @Column
+    private String description;
+
+    @Column(nullable = false)
+    private LocalDateTime dateTime;
+
+    @Column(nullable = false)
+    private Integer durationMinutes;
+
+    @Column(nullable = false)
+    private Integer capacity;
+
+    @Column(nullable = false)
+    private Long priceCents;
+
+    @Column(nullable = false)
+    private Double lat;
+
+    @Column(nullable = false)
+    private Double lon;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Instructor getInstructor() {
+        return instructor;
+    }
+
+    public void setInstructor(Instructor instructor) {
+        this.instructor = instructor;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public LocalDateTime getDateTime() {
+        return dateTime;
+    }
+
+    public void setDateTime(LocalDateTime dateTime) {
+        this.dateTime = dateTime;
+    }
+
+    public Integer getDurationMinutes() {
+        return durationMinutes;
+    }
+
+    public void setDurationMinutes(Integer durationMinutes) {
+        this.durationMinutes = durationMinutes;
+    }
+
+    public Integer getCapacity() {
+        return capacity;
+    }
+
+    public void setCapacity(Integer capacity) {
+        this.capacity = capacity;
+    }
+
+    public Long getPriceCents() {
+        return priceCents;
+    }
+
+    public void setPriceCents(Long priceCents) {
+        this.priceCents = priceCents;
+    }
+
+    public Double getLat() {
+        return lat;
+    }
+
+    public void setLat(Double lat) {
+        this.lat = lat;
+    }
+
+    public Double getLon() {
+        return lon;
+    }
+
+    public void setLon(Double lon) {
+        this.lon = lon;
+    }
+}
+
+```
+
+===== FILE: src/main/java/com/aftersports/aftersports/domain/repo/BookingRepository.java =====
+# size: 431 bytes
+```java
+package com.aftersports.aftersports.domain.repo;
+
+import com.aftersports.aftersports.domain.model.Booking;
+import java.util.List;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface BookingRepository extends JpaRepository<Booking, Long> {
+
+    long countByLessonId(Long lessonId);
+
+    List<Booking> findByLessonId(Long lessonId);
+
+    List<Booking> findByStudentEmailIgnoreCase(String studentEmail);
+}
+
+```
+
+===== FILE: src/main/java/com/aftersports/aftersports/domain/repo/InstructorRepository.java =====
+# size: 255 bytes
+```java
+package com.aftersports.aftersports.domain.repo;
+
+import com.aftersports.aftersports.domain.model.Instructor;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface InstructorRepository extends JpaRepository<Instructor, Long> {
+}
+
+```
+
+===== FILE: src/main/java/com/aftersports/aftersports/domain/repo/LessonRepository.java =====
+# size: 323 bytes
+```java
+package com.aftersports.aftersports.domain.repo;
+
+import com.aftersports.aftersports.domain.model.Lesson;
+import java.util.List;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface LessonRepository extends JpaRepository<Lesson, Long> {
+
+    List<Lesson> findByInstructorId(Long instructorId);
+}
+
+```
+
+===== FILE: src/main/java/com/aftersports/aftersports/domain/service/BookingService.java =====
+# size: 2209 bytes
+```java
+package com.aftersports.aftersports.domain.service;
+
+import com.aftersports.aftersports.domain.model.Booking;
+import com.aftersports.aftersports.domain.model.Lesson;
+import com.aftersports.aftersports.domain.repo.BookingRepository;
+import com.aftersports.aftersports.web.dto.BookingCreateRequest;
+import com.aftersports.aftersports.web.dto.BookingDTO;
+import java.util.List;
+import java.util.stream.Collectors;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+public class BookingService {
+
+    private final BookingRepository bookingRepository;
+    private final LessonService lessonService;
+
+    public BookingService(BookingRepository bookingRepository, LessonService lessonService) {
+        this.bookingRepository = bookingRepository;
+        this.lessonService = lessonService;
+    }
+
+    @Transactional
+    public BookingDTO create(BookingCreateRequest request) {
+        lessonService.ensureCapacity(request.lessonId());
+        Lesson lesson = lessonService.getEntity(request.lessonId());
+        Booking booking = new Booking();
+        booking.setLesson(lesson);
+        booking.setStudentName(request.studentName());
+        booking.setStudentEmail(request.studentEmail());
+        Booking saved = bookingRepository.save(booking);
+        return toDTO(saved);
+    }
+
+    @Transactional(readOnly = true)
+    public List<BookingDTO> listByLesson(Long lessonId) {
+        lessonService.getEntity(lessonId);
+        return bookingRepository.findByLessonId(lessonId).stream()
+                .map(this::toDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public List<BookingDTO> listByStudentEmail(String email) {
+        return bookingRepository.findByStudentEmailIgnoreCase(email).stream()
+                .map(this::toDTO)
+                .collect(Collectors.toList());
+    }
+
+    private BookingDTO toDTO(Booking booking) {
+        return new BookingDTO(
+                booking.getId(),
+                booking.getLesson().getId(),
+                booking.getStudentName(),
+                booking.getStudentEmail(),
+                booking.getCreatedAt()
+        );
+    }
+}
+
+```
+
+===== FILE: src/main/java/com/aftersports/aftersports/domain/service/InstructorService.java =====
+# size: 2394 bytes
+```java
+package com.aftersports.aftersports.domain.service;
+
+import com.aftersports.aftersports.domain.model.Instructor;
+import com.aftersports.aftersports.domain.repo.InstructorRepository;
+import com.aftersports.aftersports.web.dto.InstructorCreateRequest;
+import com.aftersports.aftersports.web.dto.InstructorDTO;
+import com.aftersports.aftersports.web.error.NotFoundException;
+import java.util.List;
+import java.util.stream.Collectors;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+public class InstructorService {
+
+    private final InstructorRepository instructorRepository;
+
+    public InstructorService(InstructorRepository instructorRepository) {
+        this.instructorRepository = instructorRepository;
+    }
+
+    @Transactional
+    public InstructorDTO create(InstructorCreateRequest request) {
+        Instructor instructor = new Instructor();
+        instructor.setName(request.name());
+        instructor.setSport(request.sport());
+        instructor.setBio(request.bio());
+        Instructor saved = instructorRepository.save(instructor);
+        return toDTO(saved);
+    }
+
+    @Transactional(readOnly = true)
+    public List<InstructorDTO> listAll() {
+        return instructorRepository.findAll().stream()
+                .map(this::toDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public InstructorDTO getById(Long id) {
+        return toDTO(findById(id));
+    }
+
+    @Transactional
+    public InstructorDTO update(Long id, InstructorCreateRequest request) {
+        Instructor existing = findById(id);
+        existing.setName(request.name());
+        existing.setSport(request.sport());
+        existing.setBio(request.bio());
+        return toDTO(instructorRepository.save(existing));
+    }
+
+    @Transactional
+    public void delete(Long id) {
+        Instructor existing = findById(id);
+        instructorRepository.delete(existing);
+    }
+
+    @Transactional(readOnly = true)
+    public Instructor findById(Long id) {
+        return instructorRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Instructor not found: " + id));
+    }
+
+    private InstructorDTO toDTO(Instructor instructor) {
+        return new InstructorDTO(instructor.getId(), instructor.getName(), instructor.getSport(), instructor.getBio());
+    }
+}
+
+```
+
+===== FILE: src/main/java/com/aftersports/aftersports/domain/service/LessonService.java =====
+# size: 4994 bytes
+```java
+package com.aftersports.aftersports.domain.service;
+
+import com.aftersports.aftersports.domain.model.Instructor;
+import com.aftersports.aftersports.domain.model.Lesson;
+import com.aftersports.aftersports.domain.repo.BookingRepository;
+import com.aftersports.aftersports.domain.repo.LessonRepository;
+import com.aftersports.aftersports.web.dto.LessonCreateRequest;
+import com.aftersports.aftersports.web.dto.LessonDTO;
+import com.aftersports.aftersports.web.dto.LessonUpdateRequest;
+import com.aftersports.aftersports.web.error.NotFoundException;
+import java.util.List;
+import java.util.stream.Collectors;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+public class LessonService {
+
+    private final LessonRepository lessonRepository;
+    private final InstructorService instructorService;
+    private final BookingRepository bookingRepository;
+
+    public LessonService(LessonRepository lessonRepository,
+                         InstructorService instructorService,
+                         BookingRepository bookingRepository) {
+        this.lessonRepository = lessonRepository;
+        this.instructorService = instructorService;
+        this.bookingRepository = bookingRepository;
+    }
+
+    @Transactional
+    public LessonDTO create(LessonCreateRequest request) {
+        Instructor instructor = instructorService.findById(request.instructorId());
+        Lesson lesson = new Lesson();
+        lesson.setInstructor(instructor);
+        lesson.setTitle(request.title());
+        lesson.setDescription(request.description());
+        lesson.setDateTime(request.dateTime());
+        lesson.setDurationMinutes(request.durationMinutes());
+        lesson.setCapacity(request.capacity());
+        lesson.setPriceCents(request.priceCents());
+        lesson.setLat(request.lat());
+        lesson.setLon(request.lon());
+        Lesson saved = lessonRepository.save(lesson);
+        return toDTO(saved);
+    }
+
+    @Transactional(readOnly = true)
+    public List<LessonDTO> listAll() {
+        return lessonRepository.findAll().stream()
+                .map(this::toDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public LessonDTO getById(Long id) {
+        return toDTO(getEntity(id));
+    }
+
+    @Transactional
+    public LessonDTO update(Long id, LessonUpdateRequest request) {
+        Lesson lesson = getEntity(id);
+        if (request.instructorId() != null) {
+            Instructor instructor = instructorService.findById(request.instructorId());
+            lesson.setInstructor(instructor);
+        }
+        if (request.title() != null) {
+            lesson.setTitle(request.title());
+        }
+        if (request.description() != null) {
+            lesson.setDescription(request.description());
+        }
+        if (request.dateTime() != null) {
+            lesson.setDateTime(request.dateTime());
+        }
+        if (request.durationMinutes() != null) {
+            lesson.setDurationMinutes(request.durationMinutes());
+        }
+        if (request.capacity() != null) {
+            lesson.setCapacity(request.capacity());
+        }
+        if (request.priceCents() != null) {
+            lesson.setPriceCents(request.priceCents());
+        }
+        if (request.lat() != null) {
+            lesson.setLat(request.lat());
+        }
+        if (request.lon() != null) {
+            lesson.setLon(request.lon());
+        }
+        return toDTO(lessonRepository.save(lesson));
+    }
+
+    @Transactional
+    public void delete(Long id) {
+        Lesson lesson = getEntity(id);
+        lessonRepository.delete(lesson);
+    }
+
+    @Transactional(readOnly = true)
+    public List<LessonDTO> findByInstructor(Long instructorId) {
+        instructorService.findById(instructorId);
+        return lessonRepository.findByInstructorId(instructorId).stream()
+                .map(this::toDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public void ensureCapacity(Long lessonId) {
+        Lesson lesson = getEntity(lessonId);
+        long count = bookingRepository.countByLessonId(lessonId);
+        if (count >= lesson.getCapacity()) {
+            throw new IllegalArgumentException("Lesson is fully booked");
+        }
+    }
+
+    @Transactional(readOnly = true)
+    public Lesson getEntity(Long id) {
+        return lessonRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Lesson not found: " + id));
+    }
+
+    private LessonDTO toDTO(Lesson lesson) {
+        return new LessonDTO(
+                lesson.getId(),
+                lesson.getInstructor().getId(),
+                lesson.getTitle(),
+                lesson.getDescription(),
+                lesson.getDateTime(),
+                lesson.getDurationMinutes(),
+                lesson.getCapacity(),
+                lesson.getPriceCents(),
+                lesson.getLat(),
+                lesson.getLon()
+        );
+    }
+}
+
+```
+
+===== FILE: src/main/java/com/aftersports/aftersports/domain/service/WeatherService.java =====
+# size: 641 bytes
+```java
+package com.aftersports.aftersports.domain.service;
+
+import com.aftersports.aftersports.infra.external.weather.OpenMeteoClient;
+import com.aftersports.aftersports.infra.external.weather.WeatherSummary;
+import java.time.LocalDate;
+import org.springframework.stereotype.Service;
+
+@Service
+public class WeatherService {
+
+    private final OpenMeteoClient openMeteoClient;
+
+    public WeatherService(OpenMeteoClient openMeteoClient) {
+        this.openMeteoClient = openMeteoClient;
+    }
+
+    public WeatherSummary getForecast(double lat, double lon, LocalDate date) {
+        return openMeteoClient.fetchDailyForecast(lat, lon, date);
+    }
+}
+
+```
+
+===== FILE: src/main/java/com/aftersports/aftersports/infra/config/CorsConfig.java =====
+# size: 690 bytes
+```java
+package com.aftersports.aftersports.infra.config;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+@Configuration
+public class CorsConfig {
+
+    @Bean
+    public WebMvcConfigurer corsConfigurer() {
+        return new WebMvcConfigurer() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/api/**")
+                        .allowedMethods("GET", "POST", "PUT", "DELETE");
+            }
+        };
+    }
+}
+
+```
+
+===== FILE: src/main/java/com/aftersports/aftersports/infra/config/DevDataLoader.java =====
+# size: 2923 bytes
+```java
+package com.aftersports.aftersports.infra.config;
+
+import com.aftersports.aftersports.domain.model.Instructor;
+import com.aftersports.aftersports.domain.model.Lesson;
+import com.aftersports.aftersports.domain.repo.InstructorRepository;
+import com.aftersports.aftersports.domain.repo.LessonRepository;
+import java.time.LocalDateTime;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
+
+@Configuration
+@Profile("!test")
+public class DevDataLoader {
+
+    @Bean
+    CommandLineRunner loadData(InstructorRepository instructorRepository, LessonRepository lessonRepository) {
+        return args -> {
+            if (instructorRepository.count() > 0) {
+                return;
+            }
+
+            Instructor ana = new Instructor();
+            ana.setName("Ana Souza");
+            ana.setSport("SURF");
+            ana.setBio("Instrutora experiente em surf");
+
+            Instructor bruno = new Instructor();
+            bruno.setName("Bruno Lima");
+            bruno.setSport("TENIS");
+            bruno.setBio("Treinador certificado");
+
+            instructorRepository.save(ana);
+            instructorRepository.save(bruno);
+
+            Lesson surf = new Lesson();
+            surf.setInstructor(ana);
+            surf.setTitle("Aula de Surf - Iniciantes");
+            surf.setDescription("Primeiro contato com o mar");
+            surf.setDateTime(LocalDateTime.now().plusDays(3).withHour(9).withMinute(0));
+            surf.setDurationMinutes(90);
+            surf.setCapacity(6);
+            surf.setPriceCents(12000L);
+            surf.setLat(-23.993);
+            surf.setLon(-46.307);
+
+            Lesson tenis = new Lesson();
+            tenis.setInstructor(bruno);
+            tenis.setTitle("Treino de Tênis - Fundamentos");
+            tenis.setDescription("Movimentação e golpes básicos");
+            tenis.setDateTime(LocalDateTime.now().plusDays(5).withHour(8).withMinute(30));
+            tenis.setDurationMinutes(75);
+            tenis.setCapacity(4);
+            tenis.setPriceCents(15000L);
+            tenis.setLat(-23.564);
+            tenis.setLon(-46.653);
+
+            Lesson funcional = new Lesson();
+            funcional.setInstructor(bruno);
+            funcional.setTitle("Funcional na Praia");
+            funcional.setDescription("Treino dinâmico ao ar livre");
+            funcional.setDateTime(LocalDateTime.now().plusDays(7).withHour(7).withMinute(0));
+            funcional.setDurationMinutes(60);
+            funcional.setCapacity(10);
+            funcional.setPriceCents(9000L);
+            funcional.setLat(-23.991);
+            funcional.setLon(-46.302);
+
+            lessonRepository.save(surf);
+            lessonRepository.save(tenis);
+            lessonRepository.save(funcional);
+        };
+    }
+}
+
+```
+
+===== FILE: src/main/java/com/aftersports/aftersports/infra/external/weather/OpenMeteoClient.java =====
+# size: 2753 bytes
+```java
+package com.aftersports.aftersports.infra.external.weather;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import java.time.LocalDate;
+import java.util.List;
+import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestClient;
+
+@Component
+public class OpenMeteoClient {
+
+    private final RestClient restClient;
+
+    public OpenMeteoClient(RestClient.Builder builder) {
+        this.restClient = builder
+                .baseUrl("https://api.open-meteo.com/v1")
+                .build();
+    }
+
+    public WeatherSummary fetchDailyForecast(double lat, double lon, LocalDate date) {
+        OpenMeteoResponse response = restClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/forecast")
+                        .queryParam("latitude", lat)
+                        .queryParam("longitude", lon)
+                        .queryParam("daily", "temperature_2m_max,temperature_2m_min,precipitation_probability_max")
+                        .queryParam("timezone", "UTC")
+                        .queryParam("start_date", date)
+                        .queryParam("end_date", date)
+                        .build())
+                .retrieve()
+                .body(OpenMeteoResponse.class);
+
+        if (response == null || response.daily == null || response.daily.time == null || response.daily.time.isEmpty()) {
+            return new WeatherSummary(date, null, null, null, "No forecast available");
+        }
+
+        Double tempMax = first(response.daily.temperatureMax);
+        Double tempMin = first(response.daily.temperatureMin);
+        Double precip = first(response.daily.precipitationProbability);
+        String summary = buildSummary(tempMax, tempMin, precip);
+
+        return new WeatherSummary(date, tempMax, tempMin, precip, summary);
+    }
+
+    private String buildSummary(Double max, Double min, Double precip) {
+        String maxStr = max != null ? String.format("max %.1f°C", max) : "max n/d";
+        String minStr = min != null ? String.format("min %.1f°C", min) : "min n/d";
+        String precipStr = precip != null ? String.format("precip %.0f%%", precip) : "precip n/d";
+        return String.join(", ", maxStr, minStr, precipStr);
+    }
+
+    private Double first(List<Double> values) {
+        return values != null && !values.isEmpty() ? values.get(0) : null;
+    }
+
+    private record OpenMeteoResponse(Daily daily) {
+    }
+
+    private record Daily(
+            List<String> time,
+            @JsonProperty("temperature_2m_max") List<Double> temperatureMax,
+            @JsonProperty("temperature_2m_min") List<Double> temperatureMin,
+            @JsonProperty("precipitation_probability_max") List<Double> precipitationProbability
+    ) {
+    }
+}
+
+```
+
+===== FILE: src/main/java/com/aftersports/aftersports/infra/external/weather/WeatherSummary.java =====
+# size: 276 bytes
+```java
+package com.aftersports.aftersports.infra.external.weather;
+
+import java.time.LocalDate;
+
+public record WeatherSummary(
+        LocalDate date,
+        Double temperatureMax,
+        Double temperatureMin,
+        Double precipitationProbability,
+        String summary
+) {
+}
+
+```
+
+===== FILE: src/main/java/com/aftersports/aftersports/web/controller/BookingController.java =====
+# size: 1903 bytes
+```java
+package com.aftersports.aftersports.web.controller;
+
+import com.aftersports.aftersports.domain.service.BookingService;
+import com.aftersports.aftersports.web.dto.BookingCreateRequest;
+import com.aftersports.aftersports.web.dto.BookingDTO;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import java.util.List;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/api")
+@Tag(name = "Bookings")
+public class BookingController {
+
+    private final BookingService bookingService;
+
+    public BookingController(BookingService bookingService) {
+        this.bookingService = bookingService;
+    }
+
+    @PostMapping("/bookings")
+    @ResponseStatus(HttpStatus.CREATED)
+    @Operation(summary = "Create booking")
+    public BookingDTO create(@Valid @RequestBody BookingCreateRequest request) {
+        return bookingService.create(request);
+    }
+
+    @GetMapping("/lessons/{lessonId}/bookings")
+    @Operation(summary = "List bookings by lesson")
+    public List<BookingDTO> listByLesson(@PathVariable Long lessonId) {
+        return bookingService.listByLesson(lessonId);
+    }
+
+    @GetMapping("/bookings/search")
+    @Operation(summary = "Search bookings by student email")
+    public List<BookingDTO> searchByEmail(@RequestParam String email) {
+        return bookingService.listByStudentEmail(email);
+    }
+}
+
+```
+
+===== FILE: src/main/java/com/aftersports/aftersports/web/controller/InstructorController.java =====
+# size: 2329 bytes
+```java
+package com.aftersports.aftersports.web.controller;
+
+import com.aftersports.aftersports.domain.service.InstructorService;
+import com.aftersports.aftersports.web.dto.InstructorCreateRequest;
+import com.aftersports.aftersports.web.dto.InstructorDTO;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import java.util.List;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/api/instructors")
+@Tag(name = "Instructors")
+public class InstructorController {
+
+    private final InstructorService instructorService;
+
+    public InstructorController(InstructorService instructorService) {
+        this.instructorService = instructorService;
+    }
+
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    @Operation(summary = "Create instructor")
+    public InstructorDTO create(@Valid @RequestBody InstructorCreateRequest request) {
+        return instructorService.create(request);
+    }
+
+    @GetMapping
+    @Operation(summary = "List instructors")
+    public List<InstructorDTO> list() {
+        return instructorService.listAll();
+    }
+
+    @GetMapping("/{id}")
+    @Operation(summary = "Get instructor by id")
+    public InstructorDTO get(@PathVariable Long id) {
+        return instructorService.getById(id);
+    }
+
+    @PutMapping("/{id}")
+    @Operation(summary = "Update instructor")
+    public InstructorDTO update(@PathVariable Long id, @Valid @RequestBody InstructorCreateRequest request) {
+        return instructorService.update(id, request);
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(summary = "Delete instructor")
+    public void delete(@PathVariable Long id) {
+        instructorService.delete(id);
+    }
+}
+
+```
+
+===== FILE: src/main/java/com/aftersports/aftersports/web/controller/LessonController.java =====
+# size: 3288 bytes
+```java
+package com.aftersports.aftersports.web.controller;
+
+import com.aftersports.aftersports.domain.model.Lesson;
+import com.aftersports.aftersports.domain.service.LessonService;
+import com.aftersports.aftersports.domain.service.WeatherService;
+import com.aftersports.aftersports.infra.external.weather.WeatherSummary;
+import com.aftersports.aftersports.web.dto.LessonCreateRequest;
+import com.aftersports.aftersports.web.dto.LessonDTO;
+import com.aftersports.aftersports.web.dto.LessonUpdateRequest;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import java.time.LocalDate;
+import java.util.List;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/api")
+@Tag(name = "Lessons")
+public class LessonController {
+
+    private final LessonService lessonService;
+    private final WeatherService weatherService;
+
+    public LessonController(LessonService lessonService, WeatherService weatherService) {
+        this.lessonService = lessonService;
+        this.weatherService = weatherService;
+    }
+
+    @PostMapping("/lessons")
+    @ResponseStatus(HttpStatus.CREATED)
+    @Operation(summary = "Create lesson")
+    public LessonDTO create(@Valid @RequestBody LessonCreateRequest request) {
+        return lessonService.create(request);
+    }
+
+    @GetMapping("/lessons")
+    @Operation(summary = "List lessons")
+    public List<LessonDTO> list() {
+        return lessonService.listAll();
+    }
+
+    @GetMapping("/lessons/{id}")
+    @Operation(summary = "Get lesson by id")
+    public LessonDTO get(@PathVariable Long id) {
+        return lessonService.getById(id);
+    }
+
+    @PutMapping("/lessons/{id}")
+    @Operation(summary = "Update lesson")
+    public LessonDTO update(@PathVariable Long id, @Valid @RequestBody LessonUpdateRequest request) {
+        return lessonService.update(id, request);
+    }
+
+    @DeleteMapping("/lessons/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(summary = "Delete lesson")
+    public void delete(@PathVariable Long id) {
+        lessonService.delete(id);
+    }
+
+    @GetMapping("/instructors/{instructorId}/lessons")
+    @Operation(summary = "List lessons by instructor")
+    public List<LessonDTO> listByInstructor(@PathVariable Long instructorId) {
+        return lessonService.findByInstructor(instructorId);
+    }
+
+    @GetMapping("/lessons/{id}/weather")
+    @Operation(summary = "Get weather forecast for lesson")
+    public WeatherSummary weather(@PathVariable Long id) {
+        Lesson lesson = lessonService.getEntity(id);
+        LocalDate date = lesson.getDateTime().toLocalDate();
+        return weatherService.getForecast(lesson.getLat(), lesson.getLon(), date);
+    }
+}
+
+```
+
+===== FILE: src/main/java/com/aftersports/aftersports/web/dto/BookingCreateRequest.java =====
+# size: 344 bytes
+```java
+package com.aftersports.aftersports.web.dto;
+
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
+public record BookingCreateRequest(
+        @NotNull Long lessonId,
+        @NotBlank String studentName,
+        @NotBlank @Email String studentEmail
+) {
+}
+
+```
+
+===== FILE: src/main/java/com/aftersports/aftersports/web/dto/BookingDTO.java =====
+# size: 228 bytes
+```java
+package com.aftersports.aftersports.web.dto;
+
+import java.time.Instant;
+
+public record BookingDTO(
+        Long id,
+        Long lessonId,
+        String studentName,
+        String studentEmail,
+        Instant createdAt
+) {
+}
+
+```
+
+===== FILE: src/main/java/com/aftersports/aftersports/web/dto/InstructorCreateRequest.java =====
+# size: 222 bytes
+```java
+package com.aftersports.aftersports.web.dto;
+
+import jakarta.validation.constraints.NotBlank;
+
+public record InstructorCreateRequest(
+        @NotBlank String name,
+        @NotBlank String sport,
+        String bio
+) {
+}
+
+```
+
+===== FILE: src/main/java/com/aftersports/aftersports/web/dto/InstructorDTO.java =====
+# size: 126 bytes
+```java
+package com.aftersports.aftersports.web.dto;
+
+public record InstructorDTO(Long id, String name, String sport, String bio) {
+}
+
+```
+
+===== FILE: src/main/java/com/aftersports/aftersports/web/dto/LessonCreateRequest.java =====
+# size: 658 bytes
+```java
+package com.aftersports.aftersports.web.dto;
+
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
+import java.time.LocalDateTime;
+
+public record LessonCreateRequest(
+        @NotNull Long instructorId,
+        @NotBlank String title,
+        String description,
+        @NotNull LocalDateTime dateTime,
+        @NotNull @Positive Integer durationMinutes,
+        @NotNull @Positive Integer capacity,
+        @NotNull @PositiveOrZero Long priceCents,
+        @NotNull Double lat,
+        @NotNull Double lon
+) {
+}
+
+```
+
+===== FILE: src/main/java/com/aftersports/aftersports/web/dto/LessonDTO.java =====
+# size: 359 bytes
+```java
+package com.aftersports.aftersports.web.dto;
+
+import java.time.LocalDateTime;
+
+public record LessonDTO(
+        Long id,
+        Long instructorId,
+        String title,
+        String description,
+        LocalDateTime dateTime,
+        Integer durationMinutes,
+        Integer capacity,
+        Long priceCents,
+        Double lat,
+        Double lon
+) {
+}
+
+```
+
+===== FILE: src/main/java/com/aftersports/aftersports/web/dto/LessonUpdateRequest.java =====
+# size: 490 bytes
+```java
+package com.aftersports.aftersports.web.dto;
+
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
+import java.time.LocalDateTime;
+
+public record LessonUpdateRequest(
+        Long instructorId,
+        String title,
+        String description,
+        LocalDateTime dateTime,
+        @Positive Integer durationMinutes,
+        @Positive Integer capacity,
+        @PositiveOrZero Long priceCents,
+        Double lat,
+        Double lon
+) {
+}
+
+```
+
+===== FILE: src/main/java/com/aftersports/aftersports/web/error/ApiExceptionHandler.java =====
+# size: 1964 bytes
+```java
+package com.aftersports.aftersports.web.error;
+
+import java.util.HashMap;
+import java.util.Map;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+@RestControllerAdvice
+public class ApiExceptionHandler {
+
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<Map<String, Object>> handleNotFound(NotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(Map.of("message", ex.getMessage()));
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<Map<String, Object>> handleValidation(MethodArgumentNotValidException ex) {
+        Map<String, String> errors = new HashMap<>();
+        for (FieldError fieldError : ex.getBindingResult().getFieldErrors()) {
+            errors.put(fieldError.getField(), fieldError.getDefaultMessage());
+        }
+        Map<String, Object> body = new HashMap<>();
+        body.put("message", "Validation failed");
+        body.put("errors", errors);
+        return ResponseEntity.badRequest().body(body);
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<Map<String, Object>> handleIllegalArgument(IllegalArgumentException ex) {
+        return ResponseEntity.badRequest()
+                .body(Map.of("message", ex.getMessage()));
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<Map<String, Object>> handleGeneric(Exception ex) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("message", "Internal server error");
+        body.put("detail", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(body);
+    }
+}
+
+```
+
+===== FILE: src/main/java/com/aftersports/aftersports/web/error/NotFoundException.java =====
+# size: 186 bytes
+```java
+package com.aftersports.aftersports.web.error;
+
+public class NotFoundException extends RuntimeException {
+
+    public NotFoundException(String message) {
+        super(message);
+    }
+}
+
+```
+
+===== FILE: src/main/resources/application-test.yml =====
+# size: 383 bytes
+```
+spring:
+  datasource:
+    url: jdbc:h2:mem:aftersports_test;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+  sql:
+    init:
+      mode: never
+
+logging:
+  level:
+    org.springframework: WARN
+
+```
+
+===== FILE: src/main/resources/application.yaml =====
+# size: 572 bytes
+```yaml
+server:
+  port: 8080
+
+spring:
+  datasource:
+    url: jdbc:h2:mem:aftersports
+    username: postgres
+    password: surfamily
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+        jdbc.time_zone: UTC
+    open-in-view: false
+  jackson:
+    time-zone: UTC
+    serialization:
+      write-dates-as-timestamps: false
+
+app:
+  jwt:
+    secret: ${JWT_KEY}           # defina uma chave >= 32 chars
+    expiration-minutes: 240
+  admin:
+    email: ${ADMIN_EMAIL}        # para um seeder opcional
+    password: ${ADMIN_PASSWORD}
+
+```
+
+===== FILE: src/test/java/com/aftersports/aftersports/AfterSportsApplicationTests.java =====
+# size: 303 bytes
+```java
+package com.aftersports.aftersports;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+
+@SpringBootTest
+@ActiveProfiles("test")
+class AfterSportsApplicationTests {
+  @Test
+  void contextLoads() { }
+}
+
+```
+
+# total_files: 31
