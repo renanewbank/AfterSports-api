@@ -1,0 +1,28 @@
+server:
+  port: 8080
+
+spring:
+  datasource:
+    url: jdbc:h2:mem:aftersports
+    username: postgres
+    password: surfamily
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+        jdbc.time_zone: UTC
+    open-in-view: false
+  jackson:
+    time-zone: UTC
+    serialization:
+      write-dates-as-timestamps: false
+
+app:
+  jwt:
+    secret: ${JWT_KEY}           # defina uma chave >= 32 chars
+    expiration-minutes: 240
+  admin:
+    email: ${ADMIN_EMAIL}        # para um seeder opcional
+    password: ${ADMIN_PASSWORD}
