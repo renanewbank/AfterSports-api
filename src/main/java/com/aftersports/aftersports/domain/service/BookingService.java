@@ -5,6 +5,7 @@ import com.aftersports.aftersports.domain.model.Lesson;
 import com.aftersports.aftersports.domain.repo.BookingRepository;
 import com.aftersports.aftersports.web.dto.BookingCreateRequest;
 import com.aftersports.aftersports.web.dto.BookingDTO;
+import com.aftersports.aftersports.web.error.NotFoundException;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
@@ -46,6 +47,22 @@ public class BookingService {
         return bookingRepository.findByStudentEmailIgnoreCase(email).stream()
                 .map(this::toDTO)
                 .collect(Collectors.toList());
+    }
+
+    // NOVO: busca por NOME
+    @Transactional(readOnly = true)
+    public List<BookingDTO> listByStudentName(String name) {
+        return bookingRepository.findByStudentNameContainingIgnoreCase(name).stream()
+                .map(this::toDTO)
+                .collect(Collectors.toList());
+    }
+
+    // NOVO: cancelar (deletar) uma reserva
+    @Transactional
+    public void cancel(Long bookingId) {
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new NotFoundException("Booking not found: " + bookingId));
+        bookingRepository.delete(booking);
     }
 
     private BookingDTO toDTO(Booking booking) {

@@ -8,14 +8,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api")
@@ -41,9 +34,27 @@ public class BookingController {
         return bookingService.listByLesson(lessonId);
     }
 
+    // ALTERADO: agora aceita name (preferencial) e mantém email como legado.
     @GetMapping("/bookings/search")
-    @Operation(summary = "Search bookings by student email")
-    public List<BookingDTO> searchByEmail(@RequestParam String email) {
-        return bookingService.listByStudentEmail(email);
+    @Operation(summary = "Search bookings (prefer 'name'; 'email' kept for legacy)")
+    public List<BookingDTO> search(
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String email
+    ) {
+        if (name != null && !name.isBlank()) {
+            return bookingService.listByStudentName(name);
+        }
+        if (email != null && !email.isBlank()) {
+            return bookingService.listByStudentEmail(email);
+        }
+        throw new IllegalArgumentException("Informe 'name' (preferido) ou 'email'.");
+    }
+
+    // NOVO: cancelar reserva
+    @DeleteMapping("/bookings/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(summary = "Cancel booking")
+    public void cancel(@PathVariable Long id) {
+        bookingService.cancel(id);
     }
 }

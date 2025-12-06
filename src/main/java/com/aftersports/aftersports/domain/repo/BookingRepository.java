@@ -11,4 +11,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     List<Booking> findByLessonId(Long lessonId);
 
     List<Booking> findByStudentEmailIgnoreCase(String studentEmail);
+
+    List<Booking> findByStudentNameContainingIgnoreCase(String studentName);
+
 }
