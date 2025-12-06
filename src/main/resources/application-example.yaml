@@ -3,9 +3,9 @@ server:
 
 spring:
   datasource:
-    url: jdbc:h2:mem:aftersports
-    username: postgres
-    password: surfamily
+    url: jdbc:postgresql://localhost:5432/aftersports
+    username: $seu-username-aqui
+    password: $sua-senha-aqui
   jpa:
     hibernate:
       ddl-auto: update
@@ -21,8 +21,8 @@ spring:
 
 app:
   jwt:
-    secret: ${JWT_KEY:dev-secret-key-change-me-please-1234567890}   # defina uma chave >= 32 chars
+    secret: ${JWT_KEY:dev-secret-key-change-me-please-1234567890}  
     expiration-minutes: ${JWT_EXPIRATION:240}
   admin:
-    email: ${ADMIN_EMAIL:}        # para um seeder opcional
+    email: ${ADMIN_EMAIL:}       
     password: ${ADMIN_PASSWORD:}
