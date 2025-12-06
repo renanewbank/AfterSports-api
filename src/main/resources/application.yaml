@@ -21,8 +21,8 @@ spring:
 
 app:
   jwt:
-    secret: ${JWT_KEY}           # defina uma chave >= 32 chars
-    expiration-minutes: 240
+    secret: ${JWT_KEY:dev-secret-key-change-me-please-1234567890}   # defina uma chave >= 32 chars
+    expiration-minutes: ${JWT_EXPIRATION:240}
   admin:
-    email: ${ADMIN_EMAIL}        # para um seeder opcional
-    password: ${ADMIN_PASSWORD}
+    email: ${ADMIN_EMAIL:}        # para um seeder opcional
+    password: ${ADMIN_PASSWORD:}

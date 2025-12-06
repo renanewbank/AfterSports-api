@@ -2,8 +2,12 @@ package com.aftersports.aftersports.infra.config;
 
 import com.aftersports.aftersports.domain.model.Instructor;
 import com.aftersports.aftersports.domain.model.Lesson;
+import com.aftersports.aftersports.domain.model.User;
+import com.aftersports.aftersports.domain.model.UserRole;
 import com.aftersports.aftersports.domain.repo.InstructorRepository;
 import com.aftersports.aftersports.domain.repo.LessonRepository;
+import com.aftersports.aftersports.domain.repo.UserRepository;
+import com.aftersports.aftersports.domain.service.PasswordService;
 import java.time.LocalDateTime;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
@@ -15,8 +19,24 @@ import org.springframework.context.annotation.Profile;
 public class DevDataLoader {
 
     @Bean
-    CommandLineRunner loadData(InstructorRepository instructorRepository, LessonRepository lessonRepository) {
+    CommandLineRunner loadData(InstructorRepository instructorRepository,
+                              LessonRepository lessonRepository,
+                              UserRepository userRepository,
+                              PasswordService passwordService,
+                              AdminProperties adminProperties) {
         return args -> {
+            if (adminProperties.getEmail() != null && adminProperties.getPassword() != null) {
+                boolean exists = userRepository.existsByEmailIgnoreCase(adminProperties.getEmail());
+                if (!exists) {
+                    User admin = new User();
+                    admin.setName(adminProperties.getName());
+                    admin.setEmail(adminProperties.getEmail().toLowerCase());
+                    admin.setPasswordHash(passwordService.hash(adminProperties.getPassword()));
+                    admin.setRole(UserRole.ADMIN);
+                    userRepository.save(admin);
+                }
+            }
+
             if (instructorRepository.count() > 0) {
                 return;
             }
