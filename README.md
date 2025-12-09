@@ -240,4 +240,5 @@ Uso acadêmico/educacional.
 
 ### Autor do projeto
 
-* Renan Oliveira Ewbank
+* César Borba
+* Renan Ewbank
